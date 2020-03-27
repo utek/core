@@ -83,7 +83,7 @@
                     "format": {
                         "oneOf": [
                             {"type": "string"},
-                            {"type":  "array", "items": {"type":  "string"}}
+                            {"type": "array", "items": {"type": "string"}}
                         ],
                         "description": "The format(s) for which the package must be included."
                     }
@@ -92,7 +92,42 @@
         },
         "include": {
             "type": "array",
-            "description": "A list of files and folders to include."
+            "description": "A list of files and folders to include.",
+            "items": {
+                "anyOf": [
+                    {
+                        "type": "string"
+                    },
+                    {
+                        "type": "object",
+                        "description": "Information about where the file or folder resides.",
+                        "additionalProperties": false,
+                        "required": [
+                            "include"
+                        ],
+                        "properties": {
+                            "include": {
+                                "type": "string",
+                                "description": "What to include in the package."
+                            },
+                            "format": {
+                                "oneOf": [
+                                    {
+                                        "type": "string"
+                                    },
+                                    {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                ],
+                                "description": "The format(s) for which the file(s) or folder(s) must be included."
+                            }
+                        }
+                    }
+                ]
+            }
         },
         "exclude": {
             "type": "array",

@@ -61,11 +61,25 @@ class Builder(object):
 
             packages.append(p)
 
+        includes = []
+        for i in self._package.include:
+            formats = i.get("format", [])
+
+            if (
+                formats
+                and self.format
+                and self.format not in formats
+                and not ignore_packages_formats
+            ):
+                continue
+
+            includes.append(i)
+
         self._module = Module(
             self._package.name,
             self._path.as_posix(),
             packages=packages,
-            includes=self._package.include,
+            includes=includes,
         )
         self._meta = Metadata.from_package(self._package)
 
@@ -127,6 +141,15 @@ class Builder(object):
                     continue
 
                 if file.is_dir():
+                    if self.format == "sdist" or self.format in include.formats:
+                        for f in Path(file).glob("**/*"):
+                            included = f.relative_to(self._path)
+                            if (
+                                included not in to_add
+                                and not f.is_dir()
+                                and not self.is_excluded(included)
+                            ):
+                                to_add.append(included)
                     continue
 
                 file = file.relative_to(self._path)
