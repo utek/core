@@ -142,7 +142,7 @@ class Builder(object):
 
                 if file.is_dir():
                     if self.format == "sdist" or self.format in include.formats:
-                        for f in Path(file).glob("**/*"):
+                        for f in file.glob("**/*"):
                             included = f.relative_to(self._path)
                             if (
                                 included not in to_add
